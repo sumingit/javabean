@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.my.project.MemberMapper">
+
+
+
+	<insert id="insert">
+		insert into member(mid, email, passwd, name, birthday, zipcode, addrload, addrdetail, mobile, filename)
+		values(#{mid}, #{email}, #{passwd}, #{name}, #{birthday}, #{zipcode}, #{addrload}, #{addrdetail}, #{mobile}, #{filename})
+	</insert>
+
+	<delete id="delete">
+		delete from member
+		where mid = #{mid}
+	</delete>	
+	
+	<update id="mupdate">
+		update member
+		set
+			name = #{name},
+			birthday = #{birthday},
+			mobile = #{mobile},
+			email = #{email},
+			addrload = #{addrload},
+			filename = #{filename},
+			addrdetail = #{addrdetail},
+			tcode = #{tcode},
+			gcode = #{gcode}
+		where mid = #{mid}
+	</update>
+	
+	<update id="update">
+		update member
+		set
+			name = #{name},
+			birthday = #{birthday},
+			mobile = #{mobile},
+			email = #{email},
+			addrload = #{addrload},
+			filename = #{filename},
+			addrdetail = #{addrdetail}
+		where mid = #{mid}
+	</update>
+	
+
+	<update id="pwupdate">
+		update member
+		set
+			passwd = #{passwd}
+		where mid = #{mid}
+	</update>
+	
+	<select id="selectOne" resultType = "Member">
+		select m.*, t.teamname, g.gradename 
+		from member m left join team t on (m.tcode = t.teamcode)
+		left join grade g on(m.gcode = g.gradecode)
+		WHERE mid = #{mid}
+	</select>
+	<select id="selectList" resultType="Member">
+		<!-- select * from member -->
+		select m.*, t.teamname, g.gradename 
+		from member m left join team t on (m.tcode = t.teamcode)
+		left join grade g on(m.gcode = g.gradecode)
+		where m_removeyn = 'n'
+			<include refid="find"/>
+		
+		limit #{startNum} , #{perPage}
+	</select>
+	
+	<select id="selectTotalCnt" resultType="int">
+		select count(*) totalCnt from member
+		where m_removeyn = 'n' 
+	</select>
+	
+	<sql id="find">
+		<if test="findkey =='name'">
+			AND name LIKE  concat('%' , #{findvalue} , '%')
+		</if>
+		<if test="findkey =='teamname'">
+			AND teamname LIKE concat('%' , #{findvalue} , '%')
+		</if>
+		<if test="findkey =='gradename'">
+			AND gradename LIKE concat('%' , #{findvalue} , '%')
+		</if>		
+	</sql>
+	
+	
+	
+	
+	
+</mapper>

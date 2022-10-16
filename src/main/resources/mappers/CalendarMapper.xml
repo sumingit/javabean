@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.my.project.CalendarMapper">
+	<insert id="insert" parameterType="Calendar" useGeneratedKeys="true" keyProperty="num">
+		insert into calendar(title, start, end, allday) 
+		values(#{title}, #{start}, #{end}, #{allday})
+	</insert>
+	
+	<select id="selectList" resultType="Calendar">
+		select * from calendar
+	</select>
+	<delete id="delete">
+		delete from calendar
+		where title = #{title}
+	</delete>
+</mapper>

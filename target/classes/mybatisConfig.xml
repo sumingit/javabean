@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+ 
+
+<configuration>
+	<settings>
+		<!-- 널허용 : mapper에서 값을 가져올 때 null이 가능하다. -->
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+ 	<typeAliases>
+ 		<typeAlias type="com.my.project.dto.Calendar" alias="Calendar"/>
+ 		<typeAlias type="com.my.project.dto.Board" alias="Board"/>
+		<typeAlias type="com.my.project.dto.Notice" alias="Notice"/>
+		<typeAlias type="com.my.project.dto.Reply" alias="Reply"/>
+		<typeAlias type="com.my.project.dto.BoardFile" alias="BoardFile"/>
+		<typeAlias type="com.my.project.dto.NoticeFile" alias="NoticeFile"/>
+		<typeAlias type="com.my.project.dto.Member" alias="Member"/>
+		<typeAlias type="com.my.project.dto.B_Page" alias="B_Page"/>	
+ 	</typeAliases>
+</configuration> 

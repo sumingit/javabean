@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.my.project.BoardMapper">
+	<!-- useGeneratedKeys="true" keyProperty="bnum" : 자동으로 생성된 키를 bnum에 set-->
+	<insert id="insert" parameterType="Board" useGeneratedKeys="true" keyProperty="bnum">
+		INSERT INTO board(mid,subject,content)
+		VALUES (#{mid}, #{subject}, #{content})
+	</insert>
+	<update id="update">
+		UPDATE board
+		SET	subject = #{subject},
+			content =#{content},
+			modidate=now()
+		WHERE bnum = #{bnum}
+	</update>
+	
+	<!-- 삭제시 삭제여부를 y로 변경 -->
+	<update id="updateRemoveyn">
+		UPDATE board
+		SET b_removeyn = 'y'
+		WHERE bnum = #{bnum}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM board
+		WHERE bnum = #{bnum}
+	</delete>
+	
+	
+	<select id="selectOne" resultType="Board">
+		SELECT 
+			b.*,
+			case
+				when date_format(b.regidate, '%Y-%m-%d') &lt; date_format(now(),'%Y-%m-%d') then date_format(b.regidate,'%m.%d')
+				else date_format(b.regidate,'%H:%i')
+				end "createtime",
+			m.name
+		FROM board b left join member m on (m.mid = b.mid)
+		WHERE bnum = #{bnum}
+		AND b_removeyn = 'n'
+	</select>
+	
+	<select id="selectList" resultType="Board">
+		select
+			b.*,
+			case
+				when date_format(regidate, '%Y-%m-%d') &lt; date_format(now(),'%Y-%m-%d') then date_format(regidate,'%m.%d')
+				else date_format(regidate,'%H:%i')
+				end "createtime",
+			ifnull(r.replycnt,0) replycnt
+		from (select board.*, member.name
+			from board left join member on (member.mid = board.mid)
+			where b_removeyn = 'n'
+			<include refid="find"/>) b left join 
+		(select bnum, count(*) replycnt from reply
+			group by bnum) r
+		on(b.bnum = r.bnum)
+		order by b.bnum desc
+		limit #{startNum} , #{perPage}
+	</select>
+	
+	<!-- 전체게시물수 구하기 -->
+	<select id="selectTotalCnt" resultType="int">
+		select count(*) totcnt
+		from board left join member on (member.mid = board.mid)
+		where b_removeyn = 'n'
+	    <include refid="find"/>
+	</select>
+	
+	<!-- 조회조건 sql문 -->
+	<sql id="find">
+		<if test="findkey =='name'">
+			AND name LIKE  concat('%' , #{findvalue} , '%')
+		</if>
+		<if test="findkey =='subject'">
+			AND subject LIKE concat('%' , #{findvalue} , '%')
+		</if>
+		<if test="findkey =='content'">
+			AND content LIKE concat('%' , #{findvalue} , '%')
+		</if>		
+		<if test="findkey=='subcon'">
+			AND (subject LIKE concat('%' , #{findvalue} , '%')
+			   OR content LIKE concat('%' , #{findvalue} , '%'))
+		</if>	
+	
+	</sql>
+	
+	
+	<!-- 조회수 + 1 -->
+	<update id="updateReadCnt">
+		UPDATE board
+		SET readcnt = readcnt +1
+		WHERE bnum = #{bnum}
+	</update>
+	
+	
+	
+	
+	
+</mapper>  

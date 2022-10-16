@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.my.project.NoticeFileMapper">
+	<insert id="insert">
+		INSERT INTO noticefile(nnum, filename)
+		VALUES(#{nnum}, #{filename})
+	</insert>
+	<update id="update">
+		UPDATE noticefile
+		SET filename = #{filename}
+		WHERE nfnum = #{nfnum}
+	</update>
+	<delete id="delete">
+		DELETE FROM noticefile
+		WHERE nfnum = #{nfnum}
+	</delete>
+	<select id="selectOne" resultType="NoticeFile">
+		SELECT * FROM noticefile
+		WHERE nfnum = #{nfnum}
+	</select>
+	<select id="selectList" resultType="NoticeFile">
+		SELECT * FROM noticefile
+		WHERE nnum = #{nnum}
+	</select>
+</mapper>  

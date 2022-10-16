@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.my.project.NoticeMapper">
+	<!-- useGeneratedKeys="true" keyProperty="bnum" : 자동으로 생성된 키를 bnum에 set-->
+	<insert id="insert" parameterType="Notice" useGeneratedKeys="true" keyProperty="nnum">
+		INSERT INTO notice(mid,subject,content)
+		VALUES (#{mid}, #{subject}, #{content})
+	</insert>
+	<update id="update">
+		UPDATE notice
+		SET subject = #{subject},
+			content =#{content},
+			modidate=now()
+		WHERE nnum = #{nnum}
+	</update>
+	
+	<!-- 삭제시 삭제여부를 y로 변경 -->
+	<update id="updateRemoveyn">
+		UPDATE notice
+		SET n_removeyn = 'y'
+		WHERE nnum = #{nnum}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM notice
+		WHERE nnum = #{nnum}
+	</delete>
+	
+	
+	<select id="selectOne" resultType="Notice">
+		SELECT 
+			n.*,
+			case
+				when date_format(n.regidate, '%Y-%m-%d') &lt; date_format(now(),'%Y-%m-%d') then date_format(n.regidate,'%m.%d')
+				else date_format(n.regidate,'%H:%i')
+				end "createtime",
+			m.name
+		FROM notice n left join member m on (m.mid = n.mid)
+		WHERE nnum = #{nnum}
+		and n_removeyn = 'n'
+	</select>
+	
+	<select id="selectList" resultType="Notice">
+		select
+			notice.*,
+			case
+				when date_format(notice.regidate, '%Y-%m-%d') &lt; date_format(now(),'%Y-%m-%d') then date_format(notice.regidate,'%m.%d')
+				else date_format(notice.regidate,'%H:%i')
+				end "createtime",
+			member.name
+		from notice left join member on (member.mid = notice.mid)
+		where n_removeyn = 'n'
+		order by nnum
+
+	</select>
+	
+	<!-- 전체게시물수 구하기 -->
+	<select id="selectTotalCnt" resultType="int">
+		SELECT COUNT(*) totalCnt FROM notice
+		WHERE n_removeyn = 'n'
+	</select>
+	
+	
+	
+	
+	
+	<!-- 조회수 + 1 -->
+	<update id="updateReadCnt">
+		UPDATE notice
+		SET readcnt = readcnt +1
+		WHERE nnum = #{nnum}
+	</update>
+	
+	
+	
+	
+</mapper>  
